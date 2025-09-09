@@ -22,7 +22,7 @@ class PasswordViewController: UIViewController {
         view.backgroundColor = .white
         
         // passwordLabel 레이아웃
-        passwordLabel.text = "'ㅅ'"
+        passwordLabel.text = ""
         passwordLabel.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
