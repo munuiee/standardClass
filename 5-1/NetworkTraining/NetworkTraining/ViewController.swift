@@ -8,59 +8,47 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         fetchData()
     }
+    
+    private func fetchData() {
         
-        private func fetchData() {
-        
-        // URL 구성요소
-        let scheme = "https"
-        let host = "reqres.in"
-        let path = "/api/users"
-        let listQueryItem = URLQueryItem(name: "list", value: "2")
-                
-        
-        // URL Components 생성
-        var components = URLComponents()
-        components.scheme = scheme
-        components.host = host
-        components.path = path
-        components.queryItems = [listQueryItem]
-        
-        
-        // URL 변환
-        if let url = components.url {
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-
-            let session: URLSession = URLSession(configuration: .default)
-            session.dataTask(with: request) { data, response, error in
-                guard let data, error == nil else { return }
-
-                // 디코딩
-                do {
-                    let decoder = JSONDecoder()
-                    let result = try decoder.decode(Welcome.self, from: data)
-                    print(result)
-                    
-                } catch {
-                    print("디코딩 실패")
-                }
-            }
-            .resume()
-        } else {
-            print("URL 생성 실패")
+        guard let url: URL = URL(string: "https://reqres.in/api/users?list=2") else {
+            print("URL is not correct")
+            return
         }
         
         
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let session: URLSession = URLSession(configuration: .default)
+        session.dataTask(with: request) { data, response, error in
+            guard let data, error == nil else { return }
+            
+            // 디코딩
+            do {
+                let decoder = JSONDecoder()
+                let result = try decoder.decode(Welcome.self, from: data)
+                print(result)
+                
+            } catch {
+                print("디코딩 실패")
+            }
+        }
+        .resume()
+        
     }
+    
+    
 }
+
 
 // MARK: - Welcome
 struct Welcome: Codable {
     let page, perPage, total, totalPages: Int
     let data: [Datum]
     let support: Support
-
+    
     enum CodingKeys: String, CodingKey {
         case page
         case perPage = "per_page"
@@ -75,7 +63,7 @@ struct Datum: Codable {
     let id: Int
     let email, firstName, lastName: String
     let avatar: String
-
+    
     enum CodingKeys: String, CodingKey {
         case id, email
         case firstName = "first_name"
