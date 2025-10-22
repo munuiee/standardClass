@@ -16,13 +16,13 @@ class FirstViewController: UIViewController {
     
     private func configureUI() {
         view.backgroundColor = .white
-         
+        
         [firstLabel, firstButton]
             .forEach { view.addSubview($0) }
         
         firstLabel.text = "First ViewController"
         firstButton.setTitle("First button", for: .normal)
-        firstButton.backgroundColor = .systemGray2
+        firstButton.backgroundColor = .systemBrown
         firstButton.addTarget(self, action: #selector(openModal), for: .touchUpInside)
         
         firstLabel.snp.makeConstraints {
@@ -43,8 +43,8 @@ class FirstViewController: UIViewController {
     func changeText(with text: String) {
         firstLabel.text = text
     }
-
-
+    
+    
 }
 
 extension FirstViewController: ModalDelegateProtocol {
