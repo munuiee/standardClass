@@ -36,9 +36,19 @@ class FirstViewController: UIViewController {
     }
     
     @objc func openModal() {
+        modalVC.delegate = self
         present(modalVC, animated: true)
+    }
+    
+    func changeText(with text: String) {
+        firstLabel.text = text
     }
 
 
 }
 
+extension FirstViewController: ModalDelegateProtocol {
+    func didModalDismiss(with token: String) {
+        changeText(with: token)
+    }
+}

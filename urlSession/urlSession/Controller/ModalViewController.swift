@@ -2,9 +2,16 @@ import Foundation
 import UIKit
 import SnapKit
 
+/*
+ 
+ "email": "eve.holt@reqres.in",
+ "password": "cityslicka"
+}
+ */
+
 class ModalViewController: UIViewController {
     var delegate: ModalDelegateProtocol?
-    let netword = NetworkService()
+    let network = NetworkService()
     private let modalLabel = UILabel()
     private let modalButton = UIButton()
     private let emailTextField = UITextField()
@@ -24,6 +31,7 @@ class ModalViewController: UIViewController {
         modalLabel.text = "Modal ViewController"
         modalButton.setTitle( "Modal Button", for: .normal )
         modalButton.backgroundColor = .systemBlue
+        modalButton.addTarget(self, action: #selector(modalButtonClicked), for: .touchUpInside)
         emailTextField.borderStyle = .roundedRect
         passwordTextField.borderStyle = .roundedRect
         
@@ -53,5 +61,34 @@ class ModalViewController: UIViewController {
         let email = emailTextField.text ?? ""
         let password = passwordTextField.text ?? ""
         let request = LoginRequest(email: email, password: password)
+    
+        network.makeURL(with: request) { [weak self] result in
+            guard let self else { return }
+            
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    self.delegate?.didModalDismiss(with: response.token)
+                    self.dismiss(animated: true)
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    self.errorAlert(with: .network(error.localizedDescription))
+                }
+            }
+        }
+        
+        }
+    
+    func errorAlert(with modalError: ModalError) {
+        let alert = UIAlertController(
+            title: modalError.message,
+            message: nil,
+            preferredStyle:.alert
+        )
+        alert.addAction(.init(title: "확인", style: .default))
+        DispatchQueue.main.async {
+            self.present(alert, animated: true)
+        }
     }
 }
